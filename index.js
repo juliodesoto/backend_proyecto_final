@@ -40,7 +40,7 @@ servidor.set("view engine", "ejs");
 servidor.set("views", path.join(__dirname, "views"));
 
 // Servir archivos estáticos como CSS desde /public
-servidor.use(express.static(path.join(__dirname, "public")));
+servidor.use(express.static(path.join(__dirname, "front")));
 
 servidor.use(express.urlencoded({ extended: true }));
 
@@ -61,7 +61,7 @@ servidor.get("/session", (req, res) => {
     res.json({});
   }
 });
-
+/*
 // Login y logout
 servidor.get("/", (req, res) => {
     if (!req.session.usuario) {
@@ -76,6 +76,7 @@ servidor.get("/login", (req, res) => {
     }
     res.render("login", { error: false });
 });
+*/
 
 servidor.post("/login", (req, res) => {
   const { usuario, password } = req.body;
