@@ -61,26 +61,10 @@ servidor.get("/session", (req, res) => {
     res.json({});
   }
 });
-/*
-// Login y logout
-servidor.get("/", (req, res) => {
-    if (!req.session.usuario) {
-        return res.redirect("/login");
-    }
-    res.render("index", { usuario: req.session.usuario });
-});
-
-servidor.get("/login", (req, res) => {
-    if (req.session.usuario) {
-        return res.redirect("/");
-    }
-    res.render("login", { error: false });
-});
-*/
 
 servidor.post("/login", (req, res) => {
   const { usuario, password } = req.body;
-  console.log("Body recibido:", req.body); // Solo para debugging
+  console.log("Body recibido:", req.body);
 
   const usuarioEncontrado = listaUsuarios.find(
     u => u.usuario === usuario && u.password === password
