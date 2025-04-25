@@ -1,14 +1,20 @@
+// Importar variables de entorno y dependencias
 import dotenv from "dotenv";
 dotenv.config();
 import { MongoClient, ObjectId } from "mongodb";
 
+// URL de conexión a la base de datos
 const urlMongo = process.env.DB_URL;
+
+// GIF inicial
 const gifInicial = "https://i.gifer.com/3z9a.gif";
 
+// Función para conectar a la base de datos
 function conectar() {
   return MongoClient.connect(urlMongo);
 }
 
+// Obtener todas las decisiones de un usuario concreto
 export function leerDecisiones(usuario) {
   return new Promise((ok, ko) => {
     conectar()
@@ -39,6 +45,7 @@ export function leerDecisiones(usuario) {
   });
 }
 
+// Crear una nueva decisión
 export function crearDecision({ texto, resultado, exito, usuario,tipo }) {
   return new Promise((ok, ko) => {
     conectar()
@@ -67,6 +74,7 @@ export function crearDecision({ texto, resultado, exito, usuario,tipo }) {
   });
 }
 
+// Borrar una decisión
 export function borrarDecision(id) {
   return new Promise((ok, ko) => {
     conectar()
@@ -89,6 +97,7 @@ export function borrarDecision(id) {
   });
 }
 
+// Editar el texto de una decisión
 export function editarDecision(id, texto) {
   return new Promise((ok, ko) => {
     conectar()
@@ -115,6 +124,7 @@ export function editarDecision(id, texto) {
   });
 }
 
+// Editar el resultado y el éxito de una decisión
 export function editarResultado(id, resultado, exito) {
     return new Promise((ok, ko) => {
       conectar()
@@ -137,16 +147,16 @@ export function editarResultado(id, resultado, exito) {
     });
   }
 
+// Editar solo el "exito" de una decisión
 export function editarExito(id, exito) {
   return new Promise((ok, ko) => {
     conectar()
       .then((conexion) => {
         let coleccion = conexion.db("decisiones").collection("decisiones");
 
-        // Actualizar el campo "exito" con el nuevo valor
         coleccion
           .updateOne(
-            { _id: new ObjectId(id) }, // Buscar la decisión por ID
+            { _id: new ObjectId(id) }, // Buscar la decisión
             { $set: { exito: exito } }  // Establecer el nuevo valor de "exito"
           )
           .then(({ modifiedCount }) => {
@@ -155,7 +165,6 @@ export function editarExito(id, exito) {
               conexion.close();
               ko({ error: "Decisión no encontrada o no se actualizó" });
             } else {
-              // Obtener el documento actualizado para devolverlo
               coleccion
                 .findOne({ _id: new ObjectId(id) })
                 .then((updatedDecision) => {

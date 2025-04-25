@@ -10,6 +10,7 @@
   <form class="login-form" action="/login" method="POST">
     <h2>Iniciar Sesión</h2>
 
+    <!-- Error si el login falla -->
     <% if (error) { %>
       <p class="error">Usuario o contraseña incorrectos</p>
     <% } %>

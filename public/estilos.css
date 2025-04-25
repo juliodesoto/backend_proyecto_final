@@ -12,6 +12,8 @@ body.login-body {
     background: #f4f4f4;
   }
   
+    /* Formulario */
+
   .login-form {
     background: white;
     padding: 40px;
@@ -39,6 +41,7 @@ body.login-body {
     border-radius: 5px;
   }
   
+  /* Mensajes de error */
   .error {
     color: red;
     font-weight: bold;

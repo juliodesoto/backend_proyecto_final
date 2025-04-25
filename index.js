@@ -16,23 +16,26 @@ import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// Configuración base
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const servidor = express();
 
 servidor.use(cors({
-  origin: "http://localhost:5173", // o el puerto donde tengas tu React
-  credentials: true // 👈 importante para enviar cookies
+  origin: "http://localhost:5173", 
+  credentials: true 
 }));
 
 servidor.use(express.urlencoded({ extended: true }));
 
 servidor.use(express.json());
 
+// Usuarios
 const listaUsuarios = [
   { usuario: "Robert_Fripp", password: "Kingoftheking", tipo: "admin" },
   { usuario: "Robert_Wyatt", password: "RockBottom", tipo: "normal" }
 ];
 
+// Configurar EJS para renderizar vistas
 servidor.set("view engine", "ejs");
 servidor.set("views", path.join(__dirname, "views"));
 
@@ -47,6 +50,7 @@ servidor.use(session({
     saveUninitialized: false
 }));
 
+// Comprobar si hay sesión activa
 servidor.get("/session", (req, res) => {
   if (req.session.usuario && req.session.tipo) {
     res.json({
@@ -58,6 +62,7 @@ servidor.get("/session", (req, res) => {
   }
 });
 
+// Login y logout
 servidor.get("/", (req, res) => {
     if (!req.session.usuario) {
         return res.redirect("/login");
@@ -96,7 +101,7 @@ servidor.get("/logout", (req, res) => {
 });
 
 
-// Pruebas
+// Entorno de pruebas
 if (process.env.PRUEBAS) {
   servidor.use("/pruebas", express.static("./pruebas"));
 }
@@ -123,7 +128,7 @@ servidor.post("/decisiones/nueva", async (peticion, respuesta) => {
 
   let { texto, resultado = null, exito = null } = peticion.body;
 
-  // Asegurarse de que "texto" sea una cadena
+// Asegurarse de que "texto" sea una cadena
   if (typeof texto !== "string") {
     return respuesta.status(400).json({ error: "Texto debe ser una cadena" });
   }
@@ -141,9 +146,9 @@ servidor.post("/decisiones/nueva", async (peticion, respuesta) => {
       texto,
       resultado,
       exito,
-      tipo: peticion.session.tipo // ← añadimos el tipo de usuario que está logueado
+      tipo: peticion.session.tipo // añadimos el tipo de usuario que está logueado
     });
-    return respuesta.status(200).json(nuevaDecision); // ← devolvemos todo
+    return respuesta.status(200).json(nuevaDecision);
   } catch (error) {
     console.error("Error al crear decisión:", error);
     return respuesta.status(500).json({ error: "Error en el servidor" });
@@ -234,17 +239,18 @@ servidor.put("/decisiones/editar/exito/:id", async (peticion, respuesta) => {
   }
 });
 
-// Manejo de errores
+// Errores
 servidor.use((error, peticion, respuesta, siguiente) => {
   console.error("Error en la petición:", error);
   respuesta.status(400).json({ error: "Error en la petición" });
 });
 
-// Ruta para cuando no se encuentra el recurso
+// Error 404 para recursos no encontrados
 servidor.use((peticion, respuesta) => {
   respuesta.status(404).json({ error: "Recurso no encontrado" });
 });
 
+// Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 servidor.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
