@@ -15,6 +15,8 @@ import {
 import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
+import bcrypt from "bcrypt";
+
 
 // Configuración base
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -31,8 +33,16 @@ servidor.use(express.json());
 
 // Usuarios
 const listaUsuarios = [
-  { usuario: "Robert_Fripp", password: "Kingoftheking", tipo: "admin" },
-  { usuario: "Robert_Wyatt", password: "RockBottom", tipo: "normal" }
+  {
+    usuario: "Robert_Fripp",
+    password: bcrypt.hashSync("Kingoftheking", 10),
+    tipo: "admin"
+  },
+  {
+    usuario: "Robert_Wyatt",
+    password: bcrypt.hashSync("RockBottom", 10),
+    tipo: "normal"
+  }
 ];
 
 // Configurar EJS para renderizar vistas
@@ -67,7 +77,7 @@ servidor.post("/login", (req, res) => {
   console.log("Body recibido:", req.body);
 
   const usuarioEncontrado = listaUsuarios.find(
-    u => u.usuario === usuario && u.password === password
+    u => u.usuario === usuario && bcrypt.compareSync(password, u.password)
   );
 
   if (usuarioEncontrado) {
